@@ -1,7 +1,6 @@
 package it.unibo.nestedenum;
 
 import java.util.Comparator;
-import java.util.Locale;
 import java.util.Objects;
 
 /**
@@ -29,19 +28,30 @@ public final class MonthSorterNested implements MonthSorter {
         }
 
         public static Month fromString(final String month) {
-            if (month != null) {
+            // argument can't be null
+            Objects.requireNonNull(month);
+            try {
+                // if we get a perfect match there is no need to search further
+                return Month.valueOf(month);
+            } catch (IllegalArgumentException e) {
                 Month match = null;
+                // searching for partial matches
                 for (final Month elem : Month.values()) {
+                    // ignoring case but the matching string has to be at the start of the month
                     if (elem.toString().toLowerCase().startsWith(month.toLowerCase())){
+                        // if we already got a match then it's ambiguous
                         if (match != null) {
-                            return null;
+                            throw new IllegalArgumentException("The string passed as argument is ambiguous!");
                         }
                         match = elem;
                     }
                 }
+                // if we didn't get a match then there is no matching month
+                if (match == null) {
+                    throw new IllegalArgumentException("The string passed as argument isn't a month!");
+                }
                 return match;
             }
-            return null;
         }
     }
 
