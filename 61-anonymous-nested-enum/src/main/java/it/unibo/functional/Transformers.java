@@ -59,7 +59,7 @@ public final class Transformers {
         // it's basically a wrapper to guarantee that every calls returns a list even if there are no results
         return flattenTransform(base, new Function<I, List<? extends O>> () {
             public List<? extends O> call(final I input) {
-                return List.of(trasformer.call(input));
+                return List.of(transformer.call(input));
             }
         });
     }
@@ -77,7 +77,7 @@ public final class Transformers {
      * @param <I> type of the collection elements
      */
     public static <I> List<? extends I> flatten(final Iterable<? extends Collection<? extends I>> base) {
-        return flattenTrasform(base, Function.identity());
+        return flattenTransform(base, Function.identity());
     }
 
     /**

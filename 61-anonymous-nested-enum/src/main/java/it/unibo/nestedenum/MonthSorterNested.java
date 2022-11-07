@@ -24,7 +24,7 @@ public final class MonthSorterNested implements MonthSorter {
 
         private final int days;
 
-        public Month(int days) {
+        Month(int days) {
             this.days = days;
         }
 
@@ -32,7 +32,7 @@ public final class MonthSorterNested implements MonthSorter {
             if (month != null) {
                 Month match = null;
                 for (final Month elem : Month.values()) {
-                    if (elem.toString().toLower().startsWith(month.toLower())){
+                    if (elem.toString().toLowerCase().startsWith(month.toLowerCase())){
                         if (match != null) {
                             return null;
                         }
@@ -53,8 +53,8 @@ public final class MonthSorterNested implements MonthSorter {
 
     private static class SortByDays implements Comparator<String> {
         public int compare(final String s1, final String s2) {
-            final Month m1 = fromString(s1);
-            final Month m2 = fromString(s2);
+            final Month m1 = Month.fromString(s1);
+            final Month m2 = Month.fromString(s2);
             return Integer.compare(m1.days, m2.days);
         }
     }
@@ -66,9 +66,7 @@ public final class MonthSorterNested implements MonthSorter {
 
     private static class SortByOrder implements Comparator<String> {
         public int compare(final String s1, final String s2) {
-            final Month m1 = fromString(s1);
-            final Month m2 = fromString(s2);
-            return m1.compareTo(m2);
+            return Month.fromString(s1).compareTo(Month.fromString(s2));
         }
     }
 }
