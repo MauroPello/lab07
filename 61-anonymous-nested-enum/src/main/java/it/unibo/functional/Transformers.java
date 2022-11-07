@@ -54,7 +54,14 @@ public final class Transformers {
      * @param <O> output elements type
      */
     public static <I, O> List<O> transform(final Iterable<I> base, final Function<I, O> transformer) {
-        return null;
+        // we wrap the trasformer by passing to flattenTrasform a new function that returns a list 
+        // with the results of the call every time that the function is called
+        // it's basically a wrapper to guarantee that every calls returns a list even if there are no results
+        return flattenTransform(base, new Function<I, List<? extends O>> () {
+            public List<? extends O> call(final I input) {
+                return List.of(trasformer.call(input));
+            }
+        });
     }
 
     /**
@@ -70,7 +77,7 @@ public final class Transformers {
      * @param <I> type of the collection elements
      */
     public static <I> List<? extends I> flatten(final Iterable<? extends Collection<? extends I>> base) {
-        return null;
+        return flattenTrasform(base, Function.identity());
     }
 
     /**
@@ -87,7 +94,13 @@ public final class Transformers {
      * @param <I> elements type
      */
     public static <I> List<I> select(final Iterable<I> base, final Function<I, Boolean> test) {
-        return null;
+        // wrapper function that tests the input and if it passes returns a list containing the input
+        // otherwise it returns an empty list (as return type we use a generic Collection that extends I)
+        return flattenTransform(base, new Function<I, Collection<? extends I>> () {
+            public Collection<? extends I> call(final I input) {
+                return test.call(input) ? List.of(input) : List.of();
+            }
+        });
     }
 
     /**
@@ -103,6 +116,10 @@ public final class Transformers {
      * @param <I> elements type
      */
     public static <I> List<I> reject(final Iterable<I> base, final Function<I, Boolean> test) {
-        return null;
+        return select(base, new Function<I, Boolean> () {
+            public Boolean call(final I input) {
+                return !test.call(input);
+            }
+        });
     }
 }
