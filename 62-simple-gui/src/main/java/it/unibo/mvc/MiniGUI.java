@@ -22,6 +22,7 @@ import java.util.Random;
 public class MiniGUI {
 
     private static final String TITLE = "A very simple GUI application";
+    private static final String RESULT_TEXT = "The random number is: ";
     private static final int PROPORTION = 5;
     private final Random randomGenerator = new Random();
     private final JFrame frame = new JFrame(TITLE);
@@ -39,13 +40,13 @@ public class MiniGUI {
         
         // Part 1
         final JPanel myPanel = new JPanel();
-        myPanel.setLayout(new BoxLayout(myPanel, BoxLayout.X_AXIS));
+        myPanel.setLayout(new BoxLayout(myPanel, BoxLayout.LINE_AXIS));
         canvas.add(myPanel, BorderLayout.CENTER);
         
         final JButton write = new JButton("Print a random number on standard output");
         myPanel.add(write);
 
-        JTextField textField = new JTextField("Result");
+        JTextField textField = new JTextField(RESULT_TEXT);
         canvas.add(textField, BorderLayout.NORTH);
 
         /*
@@ -56,7 +57,7 @@ public class MiniGUI {
             public void actionPerformed(final ActionEvent e) {
                 int randomNum = randomGenerator.nextInt();
                 System.out.println(randomNum);
-                textField.setText("Result: " + randomNum);
+                textField.setText(RESULT_TEXT + randomNum);
             }
         });
     }
