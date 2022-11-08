@@ -1,6 +1,10 @@
 package it.unibo.mvc;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.List;
+
 import it.unibo.mvc.api.DrawNumberController;
+import it.unibo.mvc.api.DrawNumberView;
 import it.unibo.mvc.controller.DrawNumberControllerImpl;
 import it.unibo.mvc.model.DrawNumberImpl;
 import it.unibo.mvc.view.DrawNumberSwingView;
@@ -24,13 +28,36 @@ public final class LaunchApp {
      * @throws IllegalAccessException in case of reflection issues
      * @throws IllegalArgumentException in case of reflection issues
      */
-    public static void main(final String... args) {
+     public static void main(final String... args) throws
+                                    ClassNotFoundException,
+                                    NoSuchMethodException,
+                                    InvocationTargetException,
+                                    InstantiationException,
+                                    IllegalAccessException {
         final var model = new DrawNumberImpl();
         final DrawNumberController app = new DrawNumberControllerImpl(model);
-        app.addView(new DrawNumberSwingView());
-        app.addView(new DrawNumberSwingView());
-        app.addView(new DrawNumberStdoutView());
-        // for each class that implements DrawNumberView
-            // add it 3 times
+
+        // very hard coded solution using reflection taken from the solutions
+        for (final var viewType: List.of("Stdout", "Swing")) {
+            // getting class instance
+            final var clazz = Class.forName("it.unibo.mvc.view.DrawNumber" + viewType + "View");
+
+            // creating 3 instances of the class just found
+            for (int i = 0; i < 3; i++) {
+                // creating a new instance
+                final var newView = clazz.getConstructor().newInstance();
+
+                // if the just created instance can be assigned to a DrawNumberView variable
+                if (DrawNumberView.class.isAssignableFrom(newView.getClass())) {
+                    // adding view to controller
+                    app.addView((DrawNumberView) newView);
+                } else {
+                    // we mistakenly got the wrong class
+                    throw new IllegalStateException(
+                        newView.getClass() + " is not a subclass of " + DrawNumberView.class
+                    );
+                }
+            }
+        }
     }
 }
